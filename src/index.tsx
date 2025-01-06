@@ -24,6 +24,10 @@ if (navigator.userAgent.includes('Firefox')) {
   const styleElement = document.createElement('style');
   styleElement.innerHTML = tailwindcssOutput;
   shadowRoot.appendChild(styleElement);
+   // Create and inject a style element for Toastify CSS
+   const toastifyStyleElement = document.createElement('style');
+   toastifyStyleElement.innerHTML = reactToastify; // Raw Toastify CSS content
+   shadowRoot.appendChild(toastifyStyleElement);
 } else {
   /** Inject styles into shadow dom */
   const globalStyleSheet = new CSSStyleSheet();

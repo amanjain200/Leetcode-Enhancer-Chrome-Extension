@@ -11,6 +11,7 @@ import '../node_modules/react-toastify/dist/ReactToastify.css';
 export default function App() {
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
   const { width, height } = useWindowSize()
+  const [toastShown, setToastShown] = useState(false);
   /////////////////////////////////////////////////////////////////////
   const messages: string[] = [
     "You're doing amazing! Each small step counts towards success.",
@@ -45,16 +46,13 @@ export default function App() {
     "Tip: Use pen and paper to visualize your approach before coding.",
   ];
 
-  const [currentMessage, setCurrentMessage] = useState(messages[0]);
+  const [currentMessage, setCurrentMessage] = useState(messages[Math.floor(Math.random() * messages.length)]);
   
-
   useEffect(() => {
     // Function to pick the next message
     const updateMessage = () => {
-      const updateMessage = () => {
-        setCurrentMessage(messages[Math.floor(Math.random() * messages.length)]);
-      };      
-    };
+      setCurrentMessage(messages[Math.floor(Math.random() * messages.length)]);
+    };    
 
     // Set interval for 10 minutes (600,000 ms)
     const interval = setInterval(updateMessage, 120000);
@@ -62,19 +60,16 @@ export default function App() {
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
   }, []);
-
-
   
-  /////////////////////////////////////////////////////////////////////////
   // Function to trigger the confetti logic
-function triggerConfetti() {
-  console.log("Element appeared in the DOM");
-  setShowConfetti(true);
+  function triggerConfetti() {
+    console.log("Element appeared in the DOM");
+    setShowConfetti(true);
 
-  setTimeout(() => {
-    setShowConfetti(false); // Reset state after 10 seconds
-  }, 10000);
-}
+    setTimeout(() => {
+      setShowConfetti(false); // Reset state after 10 seconds
+    }, 10000);
+  }
 
   const submitButton = document.querySelector('button[data-e2e-locator="console-submit-button"]');
   console.log(submitButton); // Logs the <button> element
@@ -108,13 +103,31 @@ function triggerConfetti() {
 
           let timeDifference:number = Math.abs(currentTime.getTime() - extractedTime.getTime()) / (1000 * 60); // Difference in minutes
 
-          if (timeDifference >= 0 && timeDifference <= 1) {
+          if (timeDifference >= 0 && timeDifference <= 1 && !toastShown) {
             console.log("Time difference is within 0-1 minutes. Trigger your logic here.");
             console.log('Submission Accepted');
             triggerConfetti();
-            toast.success("Success Notification !", {
-              position: "top-right"
+            toast.success("🎉 Let's go! 🚀 You're on fire! 🔥", {
+              position: "top-right",
+              toastId: "success-toast"
             });
+
+            // toast.success("🎉 You're awesome! 🚀", {
+            //   position: "top-right",
+            //   toastId: "success-toast",
+            //   style: {
+            //     backgroundColor: isLight ? '#f9f9f9' : '#282130', // Light or dark background
+            //     color: isLight ? '#333' : '#d9d4d4', // Light or dark text color
+            //     padding: '10px',
+            //     borderRadius: '10px', // Rounded corners
+            //     boxShadow: isLight
+            //       ? '0 2px 5px rgba(0, 0, 0, 0.2)' // Subtle shadow for light mode
+            //       : '0 2px 5px rgba(255, 255, 255, 0.1)', // Subtle shadow for dark mode
+            //     border: isLight ? '1px solid #ccc' : '1px solid #444', // Light or dark border
+            //   },
+            // });
+
+            setToastShown(true);
             clearInterval(intervalId);
           } else {
             console.log("Time difference is outside the range of 0-1 minutes.");
@@ -142,7 +155,8 @@ function triggerConfetti() {
       if((!hasToastShown && submissionResult && submissionResult.textContent!=='Accepted') || ( !hasToastShown && consoleResult != null) || (!hasToastShown && element != null)){
         console.log('Submission Result is not Accepted! Inside wrong submission');
         toast.warning("Don't Give Up! Try Again ⚡", {
-          position: "top-right"
+          position: "top-right",
+          toastId: "success-toast"
         });
         hasToastShown = true;
         clearInterval(intervalId);
@@ -159,6 +173,7 @@ function triggerConfetti() {
 
 
   const theme = useStorage(exampleThemeStorage);
+  const isLight = theme === 'light';
 
   useEffect(() => {
     console.log('content ui loaded');
@@ -168,14 +183,14 @@ function triggerConfetti() {
 
   return (
     <>
-    <span style={{display: 'flex', backgroundColor: '#f9f9f9'}}>
+    <span style={{display: 'flex', backgroundColor: isLight ? '#f9f9f9' : '#282130'}}>
       <div
         style={{
           position: 'relative',
           bottom: 0,
           width: '100%',
-          backgroundColor: '#f9f9f9',
-          color: '#333',
+          backgroundColor: isLight ? '#f9f9f9' : '#282130',
+          color: isLight ? '#333' : '#d9d4d4',
           padding: 0,
           textAlign: 'center',
           zIndex: 1000,
@@ -190,7 +205,19 @@ function triggerConfetti() {
     {showConfetti && (
         <Confetti numberOfPieces={1000} width={width} height={height} recycle={false}  tweenDuration={12000} style={{ zIndex: 9999 }}/>
       )}
-    <ToastContainer />
+    <ToastContainer
+      toastClassName={isLight ? "toast-light" : "toast-dark"}
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+    />
+
 </>
     
   );
