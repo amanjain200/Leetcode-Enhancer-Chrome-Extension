@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@extension/ui';
 import { useStorage } from '@extension/shared';
 import { exampleThemeStorage } from '@extension/storage';
 import Confetti from 'react-confetti'
@@ -60,7 +59,7 @@ export default function App() {
 
     // Cleanup interval on component unmount
     return () => clearInterval(interval);
-  }, []);
+  }, );
   
   // Function to trigger the confetti logic
   function triggerConfetti() {
@@ -94,15 +93,15 @@ export default function App() {
       const submissionResult = document.querySelector('span[data-e2e-locator="submission-result"]');
 
       if(submissionResult && submissionResult.textContent==='Accepted'){
-        let timeSpan = document.querySelector("span.max-w-full.truncate");
+        const timeSpan = document.querySelector("span.max-w-full.truncate");
         if(timeSpan != null){
-          let timeText = timeSpan.textContent!.trim(); // e.g., "Jan 01, 2025 11:39"
+          const timeText = timeSpan.textContent!.trim(); // e.g., "Jan 01, 2025 11:39"
 
           // Parse the extracted time into a Date object
-          let extractedTime = new Date(timeText); // Convert the text into a Date object
-          let currentTime = new Date(); // Get the current time
+          const extractedTime = new Date(timeText); // Convert the text into a Date object
+          const currentTime = new Date(); // Get the current time
 
-          let timeDifference:number = Math.abs(currentTime.getTime() - extractedTime.getTime()) / (1000 * 60); // Difference in minutes
+          const timeDifference:number = Math.abs(currentTime.getTime() - extractedTime.getTime()) / (1000 * 60); // Difference in minutes
 
           if (timeDifference >= 0 && timeDifference <= 1 && !toastShown) {
             console.log("Time difference is within 0-1 minutes. Trigger your logic here.");
@@ -143,7 +142,7 @@ export default function App() {
   }
 
   function pollWrongSubmissionResult(maxPollingTime=30000, interval=1000) {
-    let startTime = Date.now();
+    const startTime = Date.now();
     console.log('Polling for wrong submission');
 
     const intervalId = setInterval(() => {
@@ -184,7 +183,7 @@ export default function App() {
 
   return (
     <>
-    {displayMessage && <span style={{display: 'flex', backgroundColor: isLight ? '#f9f9f9' : '#282130'}}>
+    {displayMessage && <span style={{display: 'flex', backgroundColor: isLight ? '#282130' : '#282130'}}>
       <div
         style={{
           position: 'fixed',
@@ -200,7 +199,7 @@ export default function App() {
       >
         {currentMessage}
       </div>
-      <button style={{position:'fixed', bottom:0, right:0, paddingLeft: '10px', paddingRight: '10px', zIndex:1001, color: isLight ? '#333' : '#d9d4d4'}} onClick={() => setDisplayMessage(false)}>
+      <button style={{position:'fixed', bottom:0, right:0, paddingLeft: '10px', paddingRight: '10px', zIndex:1001, color: isLight ? '#d9d4d4' : '#d9d4d4'}} onClick={() => setDisplayMessage(false)}>
         X
       </button>
     </span>}
